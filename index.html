@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BUD — Budget &amp; Daily Spend Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app" id="app">
+  <div class="save-indicator" id="saveIndicator">Saved</div>
+
+  <div class="brand">
+    <div class="brand-name">BUD</div>
+    <div class="brand-divider"></div>
+    <div class="budget-line" id="budgetLineView">
+      <span>BUDGET: <span id="budgetDisplay">₱0.00</span></span>
+      <button id="editBudgetBtn" aria-label="Edit budget" title="Edit budget">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+      </button>
+    </div>
+    <div class="remaining-amt" id="remainingAmt">₱0.00</div>
+    <div class="remaining-label">Remaining Budget</div>
+  </div>
+
+  <div class="calendar-card">
+    <div class="cal-header">
+      <button class="cal-nav-btn" id="prevMonth" aria-label="Previous month">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <div class="cal-month" id="calMonthLabel">Month Year<span id="calMonthSpend"></span></div>
+      <button class="cal-nav-btn" id="nextMonth" aria-label="Next month">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+      </button>
+    </div>
+    <div class="weekday-row">
+      <div>S</div><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div>
+    </div>
+    <div class="day-grid" id="dayGrid"></div>
+  </div>
+
+  <div class="log-section">
+    <div class="log-title">Log</div>
+    <div class="log-divider"></div>
+    <div class="log-list" id="logList"></div>
+  </div>
+</div>
+
+<div class="overlay" id="overlay" style="display:none;">
+  <div class="modal-card" id="modalCard">
+    <div class="modal-head">
+      <div>
+        <div class="modal-date" id="modalDate">Date</div>
+        <div class="modal-day-total" id="modalDayTotal">₱0.00 logged</div>
+      </div>
+      <button class="modal-close" id="closeModal" aria-label="Close">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal-divider"></div>
+
+    <div class="modal-entries" id="modalEntries"></div>
+
+    <div class="modal-section-label">Add Entry</div>
+    <div class="type-toggle">
+      <button class="type-btn exp active" id="typeExpBtn">− Expense</button>
+      <button class="type-btn inc" id="typeIncBtn">+ Income</button>
+    </div>
+
+    <label class="field-label">Amount</label>
+    <input class="field-input" id="amountInput" placeholder="0.00" inputmode="decimal">
+
+    <label class="field-label">Type / Description</label>
+    <input class="field-input" id="descInput" placeholder="e.g. Groceries, Allowance">
+
+    <button class="add-btn" id="addEntryBtn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+      Add Entry
+    </button>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
