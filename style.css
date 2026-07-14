@@ -148,7 +148,15 @@ button, input{ font-family: inherit; }
   letter-spacing: 0.04em;
   text-transform: uppercase;
   text-align:center;
+  background: none;
+  border: none;
+  padding: 2px 6px;
+  border-radius: 6px;
+  color: var(--ink);
+  cursor: pointer;
+  font-family: inherit;
 }
+.cal-month:hover{ background: var(--cream-deep); }
 .cal-month span{
   display:block;
   font-size: 9.5px;
@@ -158,6 +166,26 @@ button, input{ font-family: inherit; }
   text-transform: none;
   margin-top:1px;
 }
+
+.month-dropdown{
+  display:flex;
+  justify-content:center;
+  gap: 8px;
+  margin: -2px 0 10px;
+}
+.month-select{
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: var(--ink);
+  background: var(--cream-deep);
+  border: 1.5px solid var(--line-strong);
+  border-radius: 8px;
+  padding: 6px 8px;
+  cursor: pointer;
+}
+.month-select:focus{ outline: 2px solid var(--green-deep); }
 .weekday-row{
   display:grid;
   grid-template-columns: repeat(7, 1fr);

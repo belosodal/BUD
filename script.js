@@ -231,6 +231,68 @@
     renderLog();
   });
 
+  // ---- Month/Year dropdown nav ----
+  const monthLabelBtn = document.getElementById('calMonthLabel');
+  const monthDropdown = document.getElementById('monthDropdown');
+  const monthSelect = document.getElementById('monthSelect');
+  const yearSelect = document.getElementById('yearSelect');
+
+  function yearRange(){
+    // Cover today's year plus any years with logged entries, padded a few years either side.
+    const years = new Set([today.getFullYear(), state.viewYear]);
+    state.entries.forEach(e=>{
+      const y = Number(e.date.split('-')[0]);
+      if(!isNaN(y)) years.add(y);
+    });
+    const min = Math.min(...years) - 3;
+    const max = Math.max(...years) + 5;
+    const list = [];
+    for(let y=min; y<=max; y++) list.push(y);
+    return list;
+  }
+
+  function populateDropdown(){
+    monthSelect.innerHTML = MONTHS.map((m,i)=> `<option value="${i}">${m}</option>`).join('');
+    yearSelect.innerHTML = yearRange().map(y=> `<option value="${y}">${y}</option>`).join('');
+    monthSelect.value = state.viewMonth;
+    yearSelect.value = state.viewYear;
+  }
+
+  function openMonthDropdown(){
+    populateDropdown();
+    monthDropdown.style.display = 'flex';
+    monthLabelBtn.setAttribute('aria-expanded','true');
+  }
+  function closeMonthDropdown(){
+    monthDropdown.style.display = 'none';
+    monthLabelBtn.setAttribute('aria-expanded','false');
+  }
+
+  monthLabelBtn.addEventListener('click', (e)=>{
+    e.stopPropagation();
+    if(monthDropdown.style.display === 'none') openMonthDropdown();
+    else closeMonthDropdown();
+  });
+
+  function jumpToSelected(){
+    const m = parseInt(monthSelect.value, 10);
+    const y = parseInt(yearSelect.value, 10);
+    if(isNaN(m) || isNaN(y)) return;
+    state.viewMonth = m;
+    state.viewYear = y;
+    renderCalendar();
+    renderLog();
+  }
+  monthSelect.addEventListener('change', jumpToSelected);
+  yearSelect.addEventListener('change', jumpToSelected);
+
+  // Close dropdown on outside click
+  document.addEventListener('click', (e)=>{
+    if(monthDropdown.style.display !== 'none' && !monthDropdown.contains(e.target) && e.target !== monthLabelBtn){
+      closeMonthDropdown();
+    }
+  });
+
   // ---- Budget edit ----
   const editIconSvg = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>`;
 

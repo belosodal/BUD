@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bud-cache-v1';
+const CACHE_NAME = 'bud-cache-v2';
 const ASSETS = [
   './',
   './index.html',

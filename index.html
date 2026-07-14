@@ -43,10 +43,14 @@
       <button class="cal-nav-btn" id="prevMonth" aria-label="Previous month">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
       </button>
-      <div class="cal-month" id="calMonthLabel">Month Year<span id="calMonthSpend"></span></div>
+      <button class="cal-month" id="calMonthLabel" aria-haspopup="true" aria-expanded="false">Month Year<span id="calMonthSpend"></span></button>
       <button class="cal-nav-btn" id="nextMonth" aria-label="Next month">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
       </button>
+    </div>
+    <div class="month-dropdown" id="monthDropdown" style="display:none;">
+      <select class="month-select" id="monthSelect" aria-label="Select month"></select>
+      <select class="month-select" id="yearSelect" aria-label="Select year"></select>
     </div>
     <div class="weekday-row">
       <div>S</div><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div>
