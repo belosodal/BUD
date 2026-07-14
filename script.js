@@ -79,6 +79,13 @@
     return state.entries.filter(e=>e.date===key);
   }
 
+  function entriesForMonth(year, month){
+    return state.entries.filter(e=>{
+      const [y,m] = e.date.split('-').map(Number);
+      return y===year && (m-1)===month;
+    });
+  }
+
   function render(){
     renderHeader();
     renderCalendar();
@@ -96,10 +103,7 @@
 
   function renderCalendar(){
     const label = document.getElementById('calMonthLabel');
-    const monthEntries = state.entries.filter(e=>{
-      const [y,m] = e.date.split('-').map(Number);
-      return y===state.viewYear && (m-1)===state.viewMonth;
-    });
+    const monthEntries = entriesForMonth(state.viewYear, state.viewMonth);
     const t = totalsFor(monthEntries);
     label.innerHTML = `${MONTHS[state.viewMonth]} ${state.viewYear}<span>₱${fmt(t.exp)} spent this month</span>`;
 
@@ -143,37 +147,71 @@
 
   function renderLog(){
     const listEl = document.getElementById('logList');
+    const titleEl = document.getElementById('logTitle');
     listEl.innerHTML = '';
-    const sorted = [...state.entries].sort((a,b)=> b.date.localeCompare(a.date) || b.id.localeCompare(a.id));
-    if(sorted.length===0){
-      listEl.innerHTML = `<div class="empty-log">No entries logged yet.<br>Tap a day on the calendar to add one.</div>`;
+
+    const isCurrentMonth = state.viewYear===today.getFullYear() && state.viewMonth===today.getMonth();
+    if(titleEl){
+      titleEl.textContent = isCurrentMonth ? 'Log' : `Log — ${MONTHS[state.viewMonth]} ${state.viewYear}`;
+    }
+
+    const monthEntries = entriesForMonth(state.viewYear, state.viewMonth);
+    if(monthEntries.length===0){
+      listEl.innerHTML = `<div class="empty-log">No entries logged this month.<br>Tap a day on the calendar to add one.</div>`;
       return;
     }
-    sorted.forEach(e=>{
-      const row = document.createElement('div');
-      row.className = 'log-row';
-      const isExp = e.type==='expense';
-      const dateLabel = new Date(e.date+'T00:00:00').toLocaleDateString(undefined,{month:'short', day:'numeric'});
-      row.innerHTML = `
-        <div class="log-icon ${isExp?'exp':'inc'}">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"><path d="${isExp?'M5 12h14':'M12 5v14M5 12h14'}"/></svg>
+
+    // Group by day, most recent day first
+    const byDay = {};
+    monthEntries.forEach(e=>{
+      (byDay[e.date] = byDay[e.date] || []).push(e);
+    });
+    const dayKeys = Object.keys(byDay).sort((a,b)=> b.localeCompare(a));
+
+    dayKeys.forEach(key=>{
+      const list = [...byDay[key]].sort((a,b)=> b.id.localeCompare(a.id));
+      const d = new Date(key+'T00:00:00');
+      const dayNum = d.getDate();
+      const weekday = d.toLocaleDateString(undefined,{weekday:'short'});
+      const t = totalsFor(list);
+
+      const group = document.createElement('div');
+      group.className = 'log-day-group';
+      group.innerHTML = `
+        <div class="log-day-label">
+          <div class="log-day-num">${dayNum}</div>
+          <div class="log-day-wd">${weekday}</div>
         </div>
-        <div class="log-amount">₱${fmt(e.amount)}</div>
-        <div class="log-meta">
-          <div class="log-desc">${escapeHtml(e.desc || (isExp?'Expense':'Income'))}</div>
-          <div class="log-date">${dateLabel}</div>
-        </div>
-        <button class="log-del" aria-label="Delete entry" data-id="${e.id}">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2m3 0-1 14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 6"/></svg>
-        </button>
+        <div class="log-day-entries"></div>
       `;
-      row.querySelector('.log-del').addEventListener('click', ()=>{
-        state.entries = state.entries.filter(x=>x.id!==e.id);
-        saveState();
-        render();
-        if(state.activeDay) renderModalEntries();
+      const entriesEl = group.querySelector('.log-day-entries');
+
+      list.forEach(e=>{
+        const isExp = e.type==='expense';
+        const row = document.createElement('div');
+        row.className = 'log-row';
+        row.innerHTML = `
+          <div class="log-icon ${isExp?'exp':'inc'}">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"><path d="${isExp?'M5 12h14':'M12 5v14M5 12h14'}"/></svg>
+          </div>
+          <div class="log-amount">₱${fmt(e.amount)}</div>
+          <div class="log-meta">
+            <div class="log-desc">${escapeHtml(e.desc || (isExp?'Expense':'Income'))}</div>
+          </div>
+          <button class="log-del" aria-label="Delete entry" data-id="${e.id}">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2m3 0-1 14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 6"/></svg>
+          </button>
+        `;
+        row.querySelector('.log-del').addEventListener('click', ()=>{
+          state.entries = state.entries.filter(x=>x.id!==e.id);
+          saveState();
+          render();
+          if(state.activeDay) renderModalEntries();
+        });
+        entriesEl.appendChild(row);
       });
-      listEl.appendChild(row);
+
+      listEl.appendChild(group);
     });
   }
 
@@ -185,10 +223,12 @@
   document.getElementById('prevMonth').addEventListener('click', ()=>{
     if(state.viewMonth===0){ state.viewMonth=11; state.viewYear--; } else state.viewMonth--;
     renderCalendar();
+    renderLog();
   });
   document.getElementById('nextMonth').addEventListener('click', ()=>{
     if(state.viewMonth===11){ state.viewMonth=0; state.viewYear++; } else state.viewMonth++;
     renderCalendar();
+    renderLog();
   });
 
   // ---- Budget edit ----
