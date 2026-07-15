@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=4">
+<link rel="stylesheet" href="style.css?v=5">
 
 <!-- PWA -->
 <link rel="manifest" href="manifest.json">
@@ -36,6 +36,10 @@
     </div>
     <div class="remaining-amt" id="remainingAmt">₱0.00</div>
     <div class="remaining-label">Remaining Budget</div>
+    <div class="savings-line" id="savingsLine">
+      <span class="savings-label">Savings:</span>
+      <span id="savingsAmt">₱0.00</span>
+    </div>
   </div>
 
   <div class="calendar-card">
@@ -84,6 +88,7 @@
     <div class="type-toggle">
       <button class="type-btn exp active" id="typeExpBtn">− Expense</button>
       <button class="type-btn inc" id="typeIncBtn">+ Income</button>
+      <button class="type-btn sav" id="typeSavBtn">◆ Savings</button>
     </div>
 
     <label class="field-label">Amount</label>
@@ -99,7 +104,7 @@
   </div>
 </div>
 
-<script src="script.js?v=2"></script>
+<script src="script.js?v=3"></script>
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {

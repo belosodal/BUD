@@ -9,6 +9,8 @@
   --green-deep: #3C5C28;
   --maroon: #6E2323;
   --maroon-deep: #5A1B1B;
+  --gold: #9C7A22;
+  --gold-deep: #7A5E15;
   --line: rgba(46,61,40,0.18);
   --line-strong: rgba(46,61,40,0.35);
   --radius-lg: 18px;
@@ -113,6 +115,26 @@ button, input{ font-family: inherit; }
   text-transform: uppercase;
   color: var(--ink-soft);
   margin-top: 2px;
+}
+.savings-line{
+  display:flex;
+  align-items:baseline;
+  justify-content:center;
+  gap: 6px;
+  margin-top: 10px;
+  font-size: 13px;
+}
+.savings-label{
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  font-size: 10.5px;
+}
+.savings-line #savingsAmt{
+  font-weight: 800;
+  color: var(--gold-deep);
+  font-size: 15px;
 }
 
 /* ---------- Calendar card ---------- */
@@ -236,6 +258,7 @@ button, input{ font-family: inherit; }
 }
 .day-dots .exp{ background: var(--maroon); }
 .day-dots .inc{ background: var(--green); }
+.day-dots .sav{ background: var(--gold); }
 
 /* ---------- Log section ---------- */
 .log-section{ margin-top: 20px; }
@@ -328,6 +351,7 @@ button, input{ font-family: inherit; }
 }
 .log-icon.exp{ background: var(--maroon); }
 .log-icon.inc{ background: var(--green); }
+.log-icon.sav{ background: var(--gold); }
 .log-amount{
   font-size: 17px;
   font-weight: 800;
@@ -474,7 +498,7 @@ button, input{ font-family: inherit; }
 
 .type-toggle{
   display:grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 8px;
   margin-bottom: 14px;
 }
@@ -483,19 +507,20 @@ button, input{ font-family: inherit; }
   align-items:center;
   justify-content:center;
   gap:6px;
-  padding: 10px 8px;
+  padding: 10px 6px;
   border-radius: var(--radius-sm);
   border: 1.5px solid var(--line-strong);
   background: transparent;
   font-weight: 700;
-  font-size: 12.5px;
-  letter-spacing: 0.03em;
+  font-size: 12px;
+  letter-spacing: 0.02em;
   text-transform: uppercase;
   color: var(--ink-soft);
   cursor:pointer;
 }
 .type-btn.active.exp{ border-color: var(--maroon); color: var(--maroon); background: rgba(110,35,35,0.08); }
 .type-btn.active.inc{ border-color: var(--green); color: var(--green-deep); background: rgba(79,122,52,0.10); }
+.type-btn.active.sav{ border-color: var(--gold); color: var(--gold-deep); background: rgba(156,122,34,0.12); }
 
 .field-label{
   display:block;
@@ -568,6 +593,7 @@ button, input{ font-family: inherit; }
   .budget-line{ justify-content:flex-start; }
   .remaining-amt{ font-size: 52px; }
   .remaining-label{ text-align:left; }
+  .savings-line{ justify-content:flex-start; }
 
   .calendar-card{
     grid-column: 1;

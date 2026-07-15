@@ -46,7 +46,7 @@
       }
       if(parsed && Array.isArray(parsed.entries)){
         state.entries = parsed.entries.filter(e =>
-          e && typeof e.date === 'string' && (e.type==='expense' || e.type==='income') && !isNaN(Number(e.amount))
+          e && typeof e.date === 'string' && (e.type==='expense' || e.type==='income' || e.type==='savings') && !isNaN(Number(e.amount))
         );
       }
     }catch(err){
@@ -62,17 +62,22 @@
     return `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
   }
   function totalsFor(list){
-    let exp=0, inc=0;
+    let exp=0, inc=0, sav=0;
     list.forEach(e=>{
       if(e.type==='expense') exp += Number(e.amount);
+      else if(e.type==='savings') sav += Number(e.amount);
       else inc += Number(e.amount);
     });
-    return {exp, inc, net: inc-exp};
+    return {exp, inc, sav, net: inc-exp-sav};
   }
 
   function computeRemaining(){
     const t = totalsFor(state.entries);
-    return state.budget - t.exp + t.inc;
+    return state.budget - t.exp - t.sav + t.inc;
+  }
+
+  function computeTotalSavings(){
+    return totalsFor(state.entries).sav;
   }
 
   function entriesForDay(key){
@@ -99,13 +104,15 @@
     const el = document.getElementById('remainingAmt');
     el.textContent = (remaining<0?'-':'') + '₱' + fmt(Math.abs(remaining));
     el.classList.toggle('over', remaining<0);
+    const savingsEl = document.getElementById('savingsAmt');
+    if(savingsEl) savingsEl.textContent = '₱' + fmt(computeTotalSavings());
   }
 
   function renderCalendar(){
     const label = document.getElementById('calMonthLabel');
     const monthEntries = entriesForMonth(state.viewYear, state.viewMonth);
     const t = totalsFor(monthEntries);
-    label.innerHTML = `${MONTHS[state.viewMonth]} ${state.viewYear}<span>₱${fmt(t.exp)} spent this month</span>`;
+    label.innerHTML = `${MONTHS[state.viewMonth]} ${state.viewYear}<span>₱${fmt(t.exp+t.sav)} spent this month</span>`;
 
     const grid = document.getElementById('dayGrid');
     grid.innerHTML = '';
@@ -138,6 +145,7 @@
         dots.className = 'day-dots';
         if(t.exp>0){ const s=document.createElement('span'); s.className='exp'; dots.appendChild(s); }
         if(t.inc>0){ const s=document.createElement('span'); s.className='inc'; dots.appendChild(s); }
+        if(t.sav>0){ const s=document.createElement('span'); s.className='sav'; dots.appendChild(s); }
         cell.appendChild(dots);
       }
       cell.addEventListener('click', ()=> openDay(key));
@@ -187,16 +195,16 @@
       const entriesEl = group.querySelector('.log-day-entries');
 
       list.forEach(e=>{
-        const isExp = e.type==='expense';
+        const meta = typeMeta(e.type);
         const row = document.createElement('div');
         row.className = 'log-row';
         row.innerHTML = `
-          <div class="log-icon ${isExp?'exp':'inc'}">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"><path d="${isExp?'M5 12h14':'M12 5v14M5 12h14'}"/></svg>
+          <div class="log-icon ${meta.cls}">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="${meta.path}"/></svg>
           </div>
           <div class="log-amount">₱${fmt(e.amount)}</div>
           <div class="log-meta">
-            <div class="log-desc">${escapeHtml(e.desc || (isExp?'Expense':'Income'))}</div>
+            <div class="log-desc">${escapeHtml(e.desc || meta.label)}</div>
           </div>
           <button class="log-del" aria-label="Delete entry" data-id="${e.id}">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2m3 0-1 14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 6"/></svg>
@@ -213,6 +221,12 @@
 
       listEl.appendChild(group);
     });
+  }
+
+  function typeMeta(type){
+    if(type==='expense') return { cls:'exp', path:'M5 12h14', label:'Expense' };
+    if(type==='savings') return { cls:'sav', path:'M12 3l9 9-9 9-9-9 9-9', label:'Savings' };
+    return { cls:'inc', path:'M12 5v14M5 12h14', label:'Income' };
   }
 
   function escapeHtml(s){
@@ -359,7 +373,7 @@
   function renderModalEntries(){
     const list = entriesForDay(state.activeDay);
     const t = totalsFor(list);
-    document.getElementById('modalDayTotal').textContent = `₱${fmt(t.exp+t.inc)} logged`;
+    document.getElementById('modalDayTotal').textContent = `₱${fmt(t.exp+t.inc+t.sav)} logged`;
     const container = document.getElementById('modalEntries');
     container.innerHTML = '';
     if(list.length===0){
@@ -367,16 +381,16 @@
       return;
     }
     list.forEach(e=>{
-      const isExp = e.type==='expense';
+      const meta = typeMeta(e.type);
       const row = document.createElement('div');
       row.className = 'log-row';
       row.innerHTML = `
-        <div class="log-icon ${isExp?'exp':'inc'}">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"><path d="${isExp?'M5 12h14':'M12 5v14M5 12h14'}"/></svg>
+        <div class="log-icon ${meta.cls}">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="${meta.path}"/></svg>
         </div>
         <div class="log-amount">₱${fmt(e.amount)}</div>
         <div class="log-meta">
-          <div class="log-desc">${escapeHtml(e.desc || (isExp?'Expense':'Income'))}</div>
+          <div class="log-desc">${escapeHtml(e.desc || meta.label)}</div>
         </div>
         <button class="log-del" aria-label="Delete entry" data-id="${e.id}">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2m3 0-1 14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 6"/></svg>
@@ -396,9 +410,11 @@
     state.formType = t;
     document.getElementById('typeExpBtn').classList.toggle('active', t==='expense');
     document.getElementById('typeIncBtn').classList.toggle('active', t==='income');
+    document.getElementById('typeSavBtn').classList.toggle('active', t==='savings');
   }
   document.getElementById('typeExpBtn').addEventListener('click', ()=> setFormType('expense'));
   document.getElementById('typeIncBtn').addEventListener('click', ()=> setFormType('income'));
+  document.getElementById('typeSavBtn').addEventListener('click', ()=> setFormType('savings'));
 
   function addEntry(){
     const amt = parseFloat(document.getElementById('amountInput').value);
