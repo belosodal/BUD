@@ -238,6 +238,7 @@
     const listEl = document.getElementById('logList');
     if(!listEl) return;
     listEl.style.minHeight = '';
+    listEl.style.maxHeight = '';
     const rows = listEl.querySelectorAll('.log-row');
     if(rows.length === 0) return;
     const idx = Math.min(rows.length, 5) - 1;
@@ -246,6 +247,10 @@
     const rowBottom = targetRow.getBoundingClientRect().bottom;
     const needed = Math.ceil(rowBottom - listTop) + 2;
     listEl.style.minHeight = needed + 'px';
+    // Only cap the height (forcing internal scroll) once there are more than 5 entries.
+    if(rows.length > 5){
+      listEl.style.maxHeight = needed + 'px';
+    }
   }
 
   function typeMeta(type){
