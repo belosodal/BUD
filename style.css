@@ -26,7 +26,8 @@ html, body{
   padding:0;
   background: var(--cream);
   height: 100%;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 body{
@@ -39,14 +40,13 @@ button, input{ font-family: inherit; }
 /* ---------- App shell (mobile-first, fills the whole screen) ---------- */
 .app{
   width:100%;
-  height: 100vh;
-  height: 100dvh;
+  min-height: 100vh;
+  min-height: 100dvh;
   background: var(--cream);
   padding: 24px 18px 28px;
   position:relative;
   display:flex;
   flex-direction:column;
-  overflow:hidden;
 }
 
 /* ---------- Header / Brand ---------- */
@@ -294,7 +294,7 @@ button, input{ font-family: inherit; }
   flex-direction:column;
   gap: 9px;
   flex: 1;
-  min-height: 0;
+  min-height: 300px;
   overflow-y:auto;
   padding-right: 2px;
   -webkit-overflow-scrolling: touch;
@@ -588,6 +588,57 @@ button, input{ font-family: inherit; }
 }
 .add-btn:disabled{ opacity: 0.4; cursor:not-allowed; }
 .add-btn:not(:disabled):hover{ background: var(--green-deep); }
+
+.entry-modal-card{ padding-bottom: 26px; }
+
+.entry-detail-top{
+  display:flex;
+  align-items:center;
+  gap: 14px;
+  margin: 2px 0 20px;
+}
+.entry-detail-icon{
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+  color: #F2E9D8;
+}
+.entry-detail-icon.exp{ background: var(--maroon); }
+.entry-detail-icon.inc{ background: var(--green); }
+.entry-detail-icon.sav{ background: var(--gold); }
+
+.entry-detail-type{
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.entry-detail-amount{
+  font-size: 30px;
+  font-weight: 900;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin-top: 2px;
+  line-height: 1.1;
+}
+.entry-detail-amount.exp{ color: var(--maroon); }
+.entry-detail-amount.inc{ color: var(--green-deep); }
+.entry-detail-amount.sav{ color: var(--gold-deep); }
+
+.entry-detail-desc{
+  font-size: 14.5px;
+  font-weight: 600;
+  line-height: 1.55;
+  color: var(--ink);
+  white-space: pre-wrap;
+  word-break: break-word;
+  padding: 2px 2px 4px;
+}
 
 .no-entries{
   font-size: 12px;

@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=6">
+<link rel="stylesheet" href="style.css?v=7">
 
 <!-- PWA -->
 <link rel="manifest" href="manifest.json">
@@ -104,7 +104,32 @@
   </div>
 </div>
 
-<script src="script.js?v=4"></script>
+<div class="overlay" id="entryOverlay" style="display:none;">
+  <div class="modal-card entry-modal-card" id="entryModalCard">
+    <div class="modal-head">
+      <div>
+        <div class="modal-date" id="entryModalDate">Date</div>
+      </div>
+      <button class="modal-close" id="closeEntryModal" aria-label="Close">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal-divider"></div>
+
+    <div class="entry-detail-top">
+      <div class="entry-detail-icon" id="entryModalIcon"></div>
+      <div>
+        <div class="entry-detail-type" id="entryModalTypeLabel">Expense</div>
+        <div class="entry-detail-amount" id="entryModalAmount">₱0.00</div>
+      </div>
+    </div>
+
+    <div class="modal-section-label">Description</div>
+    <div class="entry-detail-desc" id="entryModalDesc">—</div>
+  </div>
+</div>
+
+<script src="script.js?v=5"></script>
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {

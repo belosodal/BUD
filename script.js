@@ -220,15 +220,32 @@
           render();
           if(state.activeDay) renderModalEntries();
         });
-        row.addEventListener('click', ()=> openDay(key));
+        row.addEventListener('click', ()=> openEntryDetail(e));
         row.addEventListener('keydown', (evt)=>{
-          if(evt.key==='Enter' || evt.key===' '){ evt.preventDefault(); openDay(key); }
+          if(evt.key==='Enter' || evt.key===' '){ evt.preventDefault(); openEntryDetail(e); }
         });
         entriesEl.appendChild(row);
       });
 
       listEl.appendChild(group);
     });
+
+    adjustLogListMinHeight();
+  }
+
+  // Ensure at least 5 entries are visible in the log list before it needs to scroll.
+  function adjustLogListMinHeight(){
+    const listEl = document.getElementById('logList');
+    if(!listEl) return;
+    listEl.style.minHeight = '';
+    const rows = listEl.querySelectorAll('.log-row');
+    if(rows.length === 0) return;
+    const idx = Math.min(rows.length, 5) - 1;
+    const targetRow = rows[idx];
+    const listTop = listEl.getBoundingClientRect().top;
+    const rowBottom = targetRow.getBoundingClientRect().bottom;
+    const needed = Math.ceil(rowBottom - listTop) + 2;
+    listEl.style.minHeight = needed + 'px';
   }
 
   function typeMeta(type){
@@ -414,6 +431,39 @@
     });
   }
 
+  function amountPrefix(type){
+    if(type==='expense') return '−';
+    if(type==='savings') return '◆ ';
+    return '+';
+  }
+
+  function openEntryDetail(entry){
+    const meta = typeMeta(entry.type);
+    const d = new Date(entry.date+'T00:00:00');
+    document.getElementById('entryModalDate').textContent = d.toLocaleDateString(undefined,{weekday:'long', month:'long', day:'numeric', year:'numeric'});
+
+    const iconEl = document.getElementById('entryModalIcon');
+    iconEl.className = 'entry-detail-icon ' + meta.cls;
+    iconEl.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="${meta.path}"/></svg>`;
+
+    document.getElementById('entryModalTypeLabel').textContent = meta.label;
+
+    const amountEl = document.getElementById('entryModalAmount');
+    amountEl.className = 'entry-detail-amount ' + meta.cls;
+    amountEl.textContent = `${amountPrefix(entry.type)}₱${fmt(entry.amount)}`;
+
+    document.getElementById('entryModalDesc').textContent = entry.desc && entry.desc.trim() ? entry.desc : meta.label;
+
+    document.getElementById('entryOverlay').style.display = 'flex';
+  }
+  function closeEntryDetail(){
+    document.getElementById('entryOverlay').style.display = 'none';
+  }
+  document.getElementById('closeEntryModal').addEventListener('click', closeEntryDetail);
+  document.getElementById('entryOverlay').addEventListener('click', (e)=>{
+    if(e.target.id==='entryOverlay') closeEntryDetail();
+  });
+
   function setFormType(t){
     state.formType = t;
     document.getElementById('typeExpBtn').classList.toggle('active', t==='expense');
@@ -444,6 +494,13 @@
   document.getElementById('addEntryBtn').addEventListener('click', addEntry);
   document.getElementById('descInput').addEventListener('keydown', e=>{ if(e.key==='Enter') addEntry(); });
   document.getElementById('amountInput').addEventListener('keydown', e=>{ if(e.key==='Enter') addEntry(); });
+
+  // ---- Resize handling ----
+  let resizeTimer = null;
+  window.addEventListener('resize', ()=>{
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(adjustLogListMinHeight, 120);
+  });
 
   // ---- Init ----
   loadState();
