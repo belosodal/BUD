@@ -25,7 +25,8 @@ html, body{
   margin:0;
   padding:0;
   background: var(--cream);
-  min-height:100vh;
+  height: 100%;
+  overflow: hidden;
 }
 
 body{
@@ -38,16 +39,21 @@ button, input{ font-family: inherit; }
 /* ---------- App shell (mobile-first, fills the whole screen) ---------- */
 .app{
   width:100%;
-  min-height:100vh;
+  height: 100vh;
+  height: 100dvh;
   background: var(--cream);
   padding: 24px 18px 28px;
   position:relative;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
 }
 
 /* ---------- Header / Brand ---------- */
 .brand{
   text-align:center;
   margin-bottom: 0;
+  flex-shrink: 0;
 }
 .brand-name{
   font-size: 15px;
@@ -142,8 +148,9 @@ button, input{ font-family: inherit; }
   border: 1.5px solid var(--ink);
   border-radius: var(--radius-lg);
   padding: 14px 14px 16px;
-  margin-top: 0;
+  margin-top: 16px;
   background: var(--cream-panel);
+  flex-shrink: 0;
 }
 .cal-header{
   display:flex;
@@ -261,26 +268,36 @@ button, input{ font-family: inherit; }
 .day-dots .sav{ background: var(--gold); }
 
 /* ---------- Log section ---------- */
-.log-section{ margin-top: 20px; }
+.log-section{
+  margin-top: 20px;
+  flex: 1;
+  min-height: 0;
+  display:flex;
+  flex-direction:column;
+}
 .log-title{
   font-size: 15px;
   font-weight: 800;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   margin: 0 0 8px;
+  flex-shrink: 0;
 }
 .log-divider{
   height:1px;
   background: var(--line-strong);
   margin-bottom: 12px;
+  flex-shrink: 0;
 }
 .log-list{
   display:flex;
   flex-direction:column;
   gap: 9px;
-  max-height: 380px;
+  flex: 1;
+  min-height: 0;
   overflow-y:auto;
   padding-right: 2px;
+  -webkit-overflow-scrolling: touch;
 }
 .log-list::-webkit-scrollbar{ width: 5px; }
 .log-list::-webkit-scrollbar-thumb{ background: var(--line-strong); border-radius: 3px; }
@@ -294,6 +311,13 @@ button, input{ font-family: inherit; }
   padding: 10px 14px;
   background: var(--cream-panel);
 }
+.log-row-clickable{
+  cursor: pointer;
+  transition: background 0.12s ease, transform 0.06s ease;
+}
+.log-row-clickable:hover{ background: var(--cream-deep); }
+.log-row-clickable:active{ transform: scale(0.99); }
+.log-row-clickable:focus-visible{ outline: 2px solid var(--green-deep); outline-offset: 1px; }
 
 /* ---------- Log grouped-by-day layout ---------- */
 .log-day-group{

@@ -197,7 +197,10 @@
       list.forEach(e=>{
         const meta = typeMeta(e.type);
         const row = document.createElement('div');
-        row.className = 'log-row';
+        row.className = 'log-row log-row-clickable';
+        row.setAttribute('tabindex', '0');
+        row.setAttribute('role', 'button');
+        row.setAttribute('aria-label', `Open ${key} entries`);
         row.innerHTML = `
           <div class="log-icon ${meta.cls}">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="${meta.path}"/></svg>
@@ -210,11 +213,16 @@
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2m3 0-1 14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 6"/></svg>
           </button>
         `;
-        row.querySelector('.log-del').addEventListener('click', ()=>{
+        row.querySelector('.log-del').addEventListener('click', (evt)=>{
+          evt.stopPropagation();
           state.entries = state.entries.filter(x=>x.id!==e.id);
           saveState();
           render();
           if(state.activeDay) renderModalEntries();
+        });
+        row.addEventListener('click', ()=> openDay(key));
+        row.addEventListener('keydown', (evt)=>{
+          if(evt.key==='Enter' || evt.key===' '){ evt.preventDefault(); openDay(key); }
         });
         entriesEl.appendChild(row);
       });
