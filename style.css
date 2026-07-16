@@ -30,6 +30,11 @@ html, body{
   overflow-x: hidden;
 }
 
+/* On mobile the page itself doesn't scroll — only the log list does. */
+@media (max-width: 899px){
+  html, body{ overflow-y: hidden; height: 100%; }
+}
+
 body{
   font-family: 'Hanken Grotesk', sans-serif;
   color: var(--ink);
@@ -47,6 +52,18 @@ button, input{ font-family: inherit; }
   position:relative;
   display:flex;
   flex-direction:column;
+}
+
+/* On mobile, pin the app to the viewport height so only the log list scrolls internally. */
+@media (max-width: 899px){
+  .app{
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+  }
+  .log-list{
+    min-height: 0;
+  }
 }
 
 /* ---------- Header / Brand ---------- */
@@ -274,6 +291,7 @@ button, input{ font-family: inherit; }
   min-height: 0;
   display:flex;
   flex-direction:column;
+  overflow: hidden;
 }
 .log-title{
   font-size: 15px;

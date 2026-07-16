@@ -1,8 +1,8 @@
-const CACHE_NAME = 'bud-cache-v5';
+const CACHE_NAME = 'bud-cache-v6';
 const ASSETS = [
   './',
   './index.html',
-  './style.css?v=7',
+  './style.css?v=8',
   './script.js?v=5',
   './manifest.json',
   './icon-192.png',
