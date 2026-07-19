@@ -8,9 +8,10 @@
     budget: 15000,
     viewYear: today.getFullYear(),
     viewMonth: today.getMonth(),
-    entries: [], // {id, date:'YYYY-MM-DD', type:'expense'|'income', amount, desc}
+    entries: [], // {id, date:'YYYY-MM-DD', type:'expense'|'income'|'savings', amount, desc, wallet:'cash'|'ewallet'}
     activeDay: null,
     formType: 'expense',
+    formWallet: 'cash',
   };
 
   // ---------------- Persistence ----------------
@@ -80,6 +81,22 @@
     return totalsFor(state.entries).sav;
   }
 
+  function computeWalletTotals(){
+    let cash = 0, ewallet = 0;
+    state.entries.forEach(e=>{
+      const w = e.wallet === 'ewallet' ? 'ewallet' : 'cash';
+      const amt = Number(e.amount) || 0;
+      const delta = e.type === 'income' ? amt : -amt; // expense & savings both draw down the wallet
+      if(w === 'ewallet') ewallet += delta;
+      else cash += delta;
+    });
+    return { cash, ewallet };
+  }
+
+  function walletLabel(w){
+    return w === 'ewallet' ? 'E-Wallet' : 'Cash';
+  }
+
   function entriesForDay(key){
     return state.entries.filter(e=>e.date===key);
   }
@@ -106,6 +123,12 @@
     el.classList.toggle('over', remaining<0);
     const savingsEl = document.getElementById('savingsAmt');
     if(savingsEl) savingsEl.textContent = '₱' + fmt(computeTotalSavings());
+
+    const walletTotals = computeWalletTotals();
+    const cashEl = document.getElementById('cashAmt');
+    if(cashEl) cashEl.textContent = (walletTotals.cash<0?'-':'') + '₱' + fmt(Math.abs(walletTotals.cash));
+    const ewalletEl = document.getElementById('ewalletAmt');
+    if(ewalletEl) ewalletEl.textContent = (walletTotals.ewallet<0?'-':'') + '₱' + fmt(Math.abs(walletTotals.ewallet));
   }
 
   function renderCalendar(){
@@ -383,9 +406,11 @@
   function openDay(key){
     state.activeDay = key;
     state.formType = 'expense';
+    state.formWallet = 'cash';
     document.getElementById('amountInput').value = '';
     document.getElementById('descInput').value = '';
     setFormType('expense');
+    setFormWallet('cash');
     const d = new Date(key+'T00:00:00');
     document.getElementById('modalDate').textContent = d.toLocaleDateString(undefined,{weekday:'long', month:'long', day:'numeric'});
     renderModalEntries();
@@ -452,6 +477,8 @@
     iconEl.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="${meta.path}"/></svg>`;
 
     document.getElementById('entryModalTypeLabel').textContent = meta.label;
+    const walletEl = document.getElementById('entryModalWallet');
+    if(walletEl) walletEl.textContent = walletLabel(entry.wallet);
 
     const amountEl = document.getElementById('entryModalAmount');
     amountEl.className = 'entry-detail-amount ' + meta.cls;
@@ -479,6 +506,14 @@
   document.getElementById('typeIncBtn').addEventListener('click', ()=> setFormType('income'));
   document.getElementById('typeSavBtn').addEventListener('click', ()=> setFormType('savings'));
 
+  function setFormWallet(w){
+    state.formWallet = w;
+    document.getElementById('walletCashBtn').classList.toggle('active', w==='cash');
+    document.getElementById('walletEwalletBtn').classList.toggle('active', w==='ewallet');
+  }
+  document.getElementById('walletCashBtn').addEventListener('click', ()=> setFormWallet('cash'));
+  document.getElementById('walletEwalletBtn').addEventListener('click', ()=> setFormWallet('ewallet'));
+
   function addEntry(){
     const amt = parseFloat(document.getElementById('amountInput').value);
     if(!amt || amt<=0) return;
@@ -489,6 +524,7 @@
       type: state.formType,
       amount: amt,
       desc: desc,
+      wallet: state.formWallet,
     });
     document.getElementById('amountInput').value = '';
     document.getElementById('descInput').value = '';

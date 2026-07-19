@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=8">
+<link rel="stylesheet" href="style.css?v=9">
 
 <!-- PWA -->
 <link rel="manifest" href="manifest.json">
@@ -39,6 +39,10 @@
     <div class="savings-line" id="savingsLine">
       <span class="savings-label">Savings:</span>
       <span id="savingsAmt">₱0.00</span>
+    </div>
+    <div class="wallet-line" id="walletLine">
+      <span class="wallet-item"><span class="savings-label">Cash:</span><span id="cashAmt" class="wallet-amt">₱0.00</span></span>
+      <span class="wallet-item"><span class="savings-label">E-Wallet:</span><span id="ewalletAmt" class="wallet-amt">₱0.00</span></span>
     </div>
   </div>
 
@@ -91,6 +95,12 @@
       <button class="type-btn sav" id="typeSavBtn">◆ Savings</button>
     </div>
 
+    <div class="modal-section-label">Wallet</div>
+    <div class="wallet-toggle">
+      <button class="wallet-btn cash active" id="walletCashBtn">Cash</button>
+      <button class="wallet-btn ewallet" id="walletEwalletBtn">E-Wallet</button>
+    </div>
+
     <label class="field-label">Amount</label>
     <input class="field-input" id="amountInput" placeholder="0.00" inputmode="decimal">
 
@@ -120,6 +130,7 @@
       <div class="entry-detail-icon" id="entryModalIcon"></div>
       <div>
         <div class="entry-detail-type" id="entryModalTypeLabel">Expense</div>
+        <div class="entry-detail-wallet" id="entryModalWallet">Cash</div>
         <div class="entry-detail-amount" id="entryModalAmount">₱0.00</div>
       </div>
     </div>
@@ -129,7 +140,7 @@
   </div>
 </div>
 
-<script src="script.js?v=6"></script>
+<script src="script.js?v=7"></script>
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {

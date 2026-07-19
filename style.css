@@ -143,6 +143,26 @@ button, input{ font-family: inherit; }
   font-size: 15px;
 }
 
+.wallet-line{
+  display:flex;
+  align-items:baseline;
+  justify-content:center;
+  gap: 16px;
+  margin-top: 6px;
+  font-size: 13px;
+  flex-wrap: wrap;
+}
+.wallet-item{
+  display:flex;
+  align-items:baseline;
+  gap: 6px;
+}
+.wallet-amt{
+  font-weight: 800;
+  color: var(--ink-soft);
+  font-size: 14px;
+}
+
 /* ---------- Calendar card ---------- */
 .calendar-card{
   border: 1.5px solid var(--ink);
@@ -547,6 +567,34 @@ button, input{ font-family: inherit; }
 .type-btn.active.inc{ border-color: var(--green); color: var(--green-deep); background: rgba(79,122,52,0.10); }
 .type-btn.active.sav{ border-color: var(--gold); color: var(--gold-deep); background: rgba(156,122,34,0.12); }
 
+.wallet-toggle{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.wallet-btn{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  padding: 10px 6px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--line-strong);
+  background: transparent;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  cursor:pointer;
+}
+.wallet-btn.active{
+  border-color: var(--ink);
+  color: var(--ink);
+  background: rgba(46,61,40,0.08);
+}
+
 .field-label{
   display:block;
   font-size: 10.5px;
@@ -631,6 +679,13 @@ button, input{ font-family: inherit; }
 .entry-detail-amount.inc{ color: var(--green-deep); }
 .entry-detail-amount.sav{ color: var(--gold-deep); }
 
+.entry-detail-wallet{
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--ink-faint);
+  margin-top: 3px;
+}
+
 .entry-detail-desc{
   font-size: 14.5px;
   font-weight: 600;
@@ -670,6 +725,7 @@ button, input{ font-family: inherit; }
   .remaining-amt{ font-size: 52px; }
   .remaining-label{ text-align:left; }
   .savings-line{ justify-content:flex-start; }
+  .wallet-line{ justify-content:flex-start; }
 
   .calendar-card{
     grid-column: 1;
